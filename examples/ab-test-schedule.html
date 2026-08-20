@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A/B Test Schedule</title>
+<style>
+  :root{
+    --ink:#2b2340;
+    --muted:#9a91ab;
+    --purple:#8b5cf6;
+    --row-line:rgba(139,92,246,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 15% 0%, #f3d9ee 0%, transparent 55%),
+      radial-gradient(1200px 800px at 100% 20%, #f7d7e0 0%, transparent 50%),
+      linear-gradient(160deg,#e9d9f6 0%,#f3d7e8 45%,#f8dde2 100%);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:48px 24px;
+    color:var(--ink);
+  }
+  .wrap{width:100%;max-width:1120px;}
+
+  /* Header */
+  .badge{
+    display:block;width:max-content;margin:0 auto 22px;
+    background:rgba(190,160,235,.28);
+    color:#8b5cf6;
+    font-weight:800;font-size:13px;letter-spacing:.18em;
+    padding:9px 20px;border-radius:999px;
+  }
+  h1{
+    text-align:center;font-size:52px;font-weight:800;letter-spacing:-.02em;
+    color:#241d38;
+  }
+  h1 .accent{color:#8b5cf6;font-weight:700;}
+  .subtitle{
+    text-align:center;color:#a99fbb;font-size:19px;font-weight:500;margin-top:8px;
+  }
+
+  /* Card */
+  .card{
+    margin-top:34px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:26px;
+    box-shadow:0 30px 80px rgba(120,90,170,.18);
+    backdrop-filter:blur(6px);
+    overflow:hidden;
+  }
+
+  table{width:100%;border-collapse:collapse;}
+  thead th{
+    text-align:left;
+    color:#a99fbb;
+    font-size:13px;font-weight:800;letter-spacing:.12em;
+    padding:22px 28px 18px;
+    border-bottom:1px solid var(--row-line);
+  }
+  th.status{text-align:right;}
+
+  col.c-feature{width:48%;}
+  col.c-locale{width:14%;}
+  col.c-dates{width:22%;}
+  col.c-status{width:16%;}
+
+  tbody td{
+    padding:17px 28px;
+    border-bottom:1px solid var(--row-line);
+    vertical-align:middle;
+    font-size:18px;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  .feature{font-weight:700;color:#2b2340;}
+  .dates{color:#8a7fa0;font-weight:500;font-variant-numeric:tabular-nums;}
+  .status-cell{text-align:right;}
+
+  /* Section header rows */
+  tr.section td{
+    padding:14px 28px;
+    background:rgba(147,120,190,.06);
+    border-bottom:1px solid var(--row-line);
+  }
+  .section-label{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:14px;font-weight:800;letter-spacing:.14em;
+  }
+  .section-label::before{
+    content:"";width:5px;height:20px;border-radius:3px;background:var(--barcolor);
+  }
+
+  /* Note row */
+  tr.note td{
+    padding:13px 28px;
+    color:#9b6fd6;font-style:italic;font-weight:600;font-size:16px;
+    background:rgba(147,120,190,.03);
+  }
+
+  /* pills — all share a subtle same-hue ring so heights match */
+  .pill{
+    display:inline-block;font-weight:800;font-size:14px;
+    padding:6px 15px;border-radius:999px;line-height:1;letter-spacing:.01em;
+    border:1.5px solid transparent;
+  }
+  .loc-ca{background:#fce9b3;color:#c69a2e;border-color:#f2d585;}
+  .loc-us{background:#dfe6fb;color:#5b6fc4;border-color:#c2cef4;}
+
+  /* Solid pilot-code pills — saturated fill + faint same-hue ring */
+  .st-amber{background:#fbe6ac;color:#b8892a;border-color:#f0d386;}  /* pilot code, warm  */
+  .st-green{background:#c5edd3;color:#2f9d5f;border-color:#98dcb0;}  /* pilot code, ready */
+  .st-purple{background:#ddd3fa;color:#7b52d6;border-color:#c4b4f2;} /* pilot code        */
+  .st-blue{background:#cfe0fb;color:#3f6fd0;border-color:#a9c6f5;}   /* pilot code        */
+  .st-red{background:#fbcccc;color:#d94a4a;border-color:#f3a8a8;}    /* pilot code, risk  */
+
+  /* Status-word pills — pale fill + clear colored outline */
+  .st-amberline{background:#fdf6e2;color:#c1912b;border-color:#ecc766;} /* pending   */
+  .st-greenline{background:#e3f5ea;color:#3a9d63;border-color:#90d3a9;} /* launching */
+  .st-bluesoft{background:#e4edfc;color:#4a6fce;border-color:#aac3f2;}  /* scheduled */
+  .st-gray{background:#eeecf2;color:#8b8499;border-color:#cec8d7;}      /* TBD       */
+
+  /* footer dots */
+  .footer{
+    display:flex;justify-content:flex-end;gap:9px;
+    padding:20px 30px;background:rgba(255,255,255,.35);
+  }
+  .dot{width:10px;height:10px;border-radius:50%;}
+  .dot.p{background:#a98fe0;}
+  .dot.p2{background:#c9b7ee;}
+  .dot.o{background:#f0a878;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">✦ AI BEAUTY CHAT</span>
+    <h1>A/B Test <span class="accent">Schedule</span></h1>
+    <p class="subtitle">iOS Frontend · 2026</p>
+
+    <div class="card">
+      <table>
+        <colgroup>
+          <col class="c-feature"><col class="c-locale"><col class="c-dates"><col class="c-status">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>FEATURE</th>
+            <th class="locale">LOCALE</th>
+            <th>DATES</th>
+            <th class="status">STATUS / PILOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ============================================================
+               ROWS GO HERE. Building blocks:
+
+               Section header (barcolor + matching label color):
+               <tr class="section" style="--barcolor:#8b5cf6;">
+                 <td colspan="4"><span class="section-label" style="color:#7b6ba0;">STANDALONE</span></td>
+               </tr>
+
+               Note / callout row:
+               <tr class="note"><td colspan="4">⚠ your note text</td></tr>
+
+               Data row:
+               <tr>
+                 <td class="feature">Feature name</td>
+                 <td><span class="pill loc-us">US</span></td>
+                 <td class="dates">8/6/26 − 8/26/26</td>
+                 <td class="status-cell"><span class="pill st-green">S−3783C</span></td>
+               </tr>
+
+               Use an em/en dash "—" in a .dates cell when there's no date.
+          ============================================================ -->
+          <tr class="section" style="--barcolor:#8b5cf6;">
+            <td colspan="4"><span class="section-label" style="color:#7b6ba0;">STANDALONE</span></td>
+          </tr>
+          <tr>
+            <td class="feature">CA Welcome Mat Redesign + Global Nav</td>
+            <td><span class="pill loc-ca">CA</span></td>
+            <td class="dates">7/30/26 − 8/19/26</td>
+            <td class="status-cell"><span class="pill st-amber">S−3800F</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Agentic Memory</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">8/6/26 − 8/26/26</td>
+            <td class="status-cell"><span class="pill st-green">S−3783C</span></td>
+          </tr>
+          <tr class="section" style="--barcolor:#8b5cf6;">
+            <td colspan="4"><span class="section-label" style="color:#7b6ba0;">TEST 3</span></td>
+          </tr>
+          <tr class="note"><td colspan="4">⚠ Can launch as soon as Agentic Memory is done &amp; scaled</td></tr>
+          <tr>
+            <td class="feature">Loyalty Retest</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">8/27/26 − 9/16/26</td>
+            <td class="status-cell"><span class="pill st-purple">S−3726C</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Promo Retest</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">8/27/26 − 9/16/26</td>
+            <td class="status-cell"><span class="pill st-purple">S−3726C</span></td>
+          </tr>
+          <tr>
+            <td class="feature">SKU Selection Optimization</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">8/27/26 − 9/16/26</td>
+            <td class="status-cell"><span class="pill st-purple">S−3726C</span></td>
+          </tr>
+          <tr class="section" style="--barcolor:#5b8def;">
+            <td colspan="4"><span class="section-label" style="color:#5f7bb5;">DYNAMIC ENTRY</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Dynamic Entry Point Prompts</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">9/3/26 − 9/24/26</td>
+            <td class="status-cell"><span class="pill st-blue">S−3801C</span></td>
+          </tr>
+          <tr class="section" style="--barcolor:#e05a6f;">
+            <td colspan="4"><span class="section-label" style="color:#b05264;">TEST 4</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Shade Matching</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">9/17/26 − 10/7/26</td>
+            <td class="status-cell"><span class="pill st-red">S−3802C</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Product Comparison</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">9/17/26 − 10/7/26</td>
+            <td class="status-cell"><span class="pill st-red">S−3802C</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Sample Awareness</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">9/17/26 − 10/7/26</td>
+            <td class="status-cell"><span class="pill st-amberline">Pending Eng</span></td>
+          </tr>
+          <tr class="section" style="--barcolor:#b39ddb;">
+            <td colspan="4"><span class="section-label" style="color:#8478a3;">IN REVIEW</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Product Recommendations by Purchase History</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">—</td>
+            <td class="status-cell"><span class="pill st-greenline">Launching − No Test</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Product Recommendation Reasoning</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">—</td>
+            <td class="status-cell"><span class="pill st-gray">Testing TBD</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Routine Builder</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">—</td>
+            <td class="status-cell"><span class="pill st-bluesoft">After Code Freeze</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Store Inventory Awareness</td>
+            <td><span class="pill loc-us">US</span></td>
+            <td class="dates">—</td>
+            <td class="status-cell"><span class="pill st-gray">Testing TBD</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="footer">
+        <span class="dot p"></span>
+        <span class="dot p2"></span>
+        <span class="dot o"></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
