@@ -1,0 +1,3 @@
+# Local eval workspace / optimizer logs — not part of the shippable skill
+evals/
+*.log

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PAGE_TITLE}}</title>
+<style>
+  :root{
+    --ink:#2b2340;
+    --muted:#9a91ab;
+    --purple:#8b5cf6;
+    --row-line:rgba(139,92,246,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 15% 0%, #f3d9ee 0%, transparent 55%),
+      radial-gradient(1200px 800px at 100% 20%, #f7d7e0 0%, transparent 50%),
+      linear-gradient(160deg,#e9d9f6 0%,#f3d7e8 45%,#f8dde2 100%);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:48px 24px;
+    color:var(--ink);
+  }
+  .wrap{width:100%;max-width:1120px;}
+
+  /* Header */
+  .badge{
+    display:block;width:max-content;margin:0 auto 22px;
+    background:rgba(190,160,235,.28);
+    color:#8b5cf6;
+    font-weight:800;font-size:13px;letter-spacing:.18em;
+    padding:9px 20px;border-radius:999px;
+  }
+  h1{
+    text-align:center;font-size:52px;font-weight:800;letter-spacing:-.02em;
+    color:#241d38;
+  }
+  h1 .accent{color:#8b5cf6;font-weight:700;}
+  .subtitle{
+    text-align:center;color:#a99fbb;font-size:19px;font-weight:500;margin-top:8px;
+  }
+
+  /* Card */
+  .card{
+    margin-top:34px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:26px;
+    box-shadow:0 30px 80px rgba(120,90,170,.18);
+    backdrop-filter:blur(6px);
+    overflow:hidden;
+  }
+
+  table{width:100%;border-collapse:collapse;}
+  thead th{
+    text-align:left;
+    color:#a99fbb;
+    font-size:13px;font-weight:800;letter-spacing:.12em;
+    padding:22px 28px 18px;
+    border-bottom:1px solid var(--row-line);
+  }
+  th.status{text-align:right;}
+
+  col.c-feature{width:48%;}
+  col.c-locale{width:14%;}
+  col.c-dates{width:22%;}
+  col.c-status{width:16%;}
+
+  tbody td{
+    padding:17px 28px;
+    border-bottom:1px solid var(--row-line);
+    vertical-align:middle;
+    font-size:18px;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  .feature{font-weight:700;color:#2b2340;}
+  .dates{color:#8a7fa0;font-weight:500;font-variant-numeric:tabular-nums;}
+  .status-cell{text-align:right;}
+
+  /* Section header rows */
+  tr.section td{
+    padding:14px 28px;
+    background:rgba(147,120,190,.06);
+    border-bottom:1px solid var(--row-line);
+  }
+  .section-label{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:14px;font-weight:800;letter-spacing:.14em;
+  }
+  .section-label::before{
+    content:"";width:5px;height:20px;border-radius:3px;background:var(--barcolor);
+  }
+
+  /* Note row */
+  tr.note td{
+    padding:13px 28px;
+    color:#9b6fd6;font-style:italic;font-weight:600;font-size:16px;
+    background:rgba(147,120,190,.03);
+  }
+
+  /* pills */
+  .pill{
+    display:inline-block;font-weight:800;font-size:14px;
+    padding:7px 15px;border-radius:999px;line-height:1;letter-spacing:.01em;
+  }
+  .loc-ca{background:#fdefc0;color:#c69a2e;}
+  .loc-us{background:#dfe6fb;color:#5b6fc4;}
+
+  /* Status pill palette — pick per row (see SKILL.md) */
+  .st-amber{background:#fdefc0;color:#c69a2e;}       /* solid pilot code, warm  */
+  .st-green{background:#c8f0d8;color:#2f9d5f;}       /* solid pilot code, ready */
+  .st-purple{background:#e2d9fb;color:#7b52d6;}      /* solid pilot code        */
+  .st-blue{background:#d5e4fb;color:#3f6fd0;}        /* solid pilot code        */
+  .st-red{background:#fbd6d6;color:#d94a4a;}         /* solid pilot code, risk  */
+  .st-amberline{background:#fbedcf;color:#c99a2c;}   /* status word — pending   */
+  .st-greenline{background:#cdeed9;color:#2f9d5f;}   /* status word — launching */
+  .st-bluesoft{background:#dbe6fb;color:#4a6fce;}    /* status word — scheduled */
+  .st-gray{background:#e5e2ec;color:#8f88a1;}        /* status word — TBD       */
+
+  /* footer dots */
+  .footer{
+    display:flex;justify-content:flex-end;gap:9px;
+    padding:20px 30px;background:rgba(255,255,255,.35);
+  }
+  .dot{width:10px;height:10px;border-radius:50%;}
+  .dot.p{background:#a98fe0;}
+  .dot.p2{background:#c9b7ee;}
+  .dot.o{background:#f0a878;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">{{BADGE}}</span>
+    <h1>{{TITLE_MAIN}} <span class="accent">{{TITLE_ACCENT}}</span></h1>
+    <p class="subtitle">{{SUBTITLE}}</p>
+
+    <div class="card">
+      <table>
+        <colgroup>
+          <col class="c-feature"><col class="c-locale"><col class="c-dates"><col class="c-status">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>FEATURE</th>
+            <th class="locale">LOCALE</th>
+            <th>DATES</th>
+            <th class="status">STATUS / PILOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ============================================================
+               ROWS GO HERE. Building blocks:
+
+               Section header (barcolor + matching label color):
+               <tr class="section" style="--barcolor:#8b5cf6;">
+                 <td colspan="4"><span class="section-label" style="color:#7b6ba0;">STANDALONE</span></td>
+               </tr>
+
+               Note / callout row:
+               <tr class="note"><td colspan="4">⚠ your note text</td></tr>
+
+               Data row:
+               <tr>
+                 <td class="feature">Feature name</td>
+                 <td><span class="pill loc-us">US</span></td>
+                 <td class="dates">8/6/26 − 8/26/26</td>
+                 <td class="status-cell"><span class="pill st-green">S−3783C</span></td>
+               </tr>
+
+               Use an em/en dash "—" in a .dates cell when there's no date.
+          ============================================================ -->
+          {{ROWS}}
+        </tbody>
+      </table>
+      <div class="footer">
+        <span class="dot p"></span>
+        <span class="dot p2"></span>
+        <span class="dot o"></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
