@@ -101,24 +101,27 @@
     background:rgba(147,120,190,.03);
   }
 
-  /* pills */
+  /* pills — all share a subtle same-hue ring so heights match */
   .pill{
     display:inline-block;font-weight:800;font-size:14px;
-    padding:7px 15px;border-radius:999px;line-height:1;letter-spacing:.01em;
+    padding:6px 15px;border-radius:999px;line-height:1;letter-spacing:.01em;
+    border:1.5px solid transparent;
   }
-  .loc-ca{background:#fdefc0;color:#c69a2e;}
-  .loc-us{background:#dfe6fb;color:#5b6fc4;}
+  .loc-ca{background:#fce9b3;color:#c69a2e;border-color:#f2d585;}
+  .loc-us{background:#dfe6fb;color:#5b6fc4;border-color:#c2cef4;}
 
-  /* Status pill palette — pick per row (see SKILL.md) */
-  .st-amber{background:#fdefc0;color:#c69a2e;}       /* solid pilot code, warm  */
-  .st-green{background:#c8f0d8;color:#2f9d5f;}       /* solid pilot code, ready */
-  .st-purple{background:#e2d9fb;color:#7b52d6;}      /* solid pilot code        */
-  .st-blue{background:#d5e4fb;color:#3f6fd0;}        /* solid pilot code        */
-  .st-red{background:#fbd6d6;color:#d94a4a;}         /* solid pilot code, risk  */
-  .st-amberline{background:#fbedcf;color:#c99a2c;}   /* status word — pending   */
-  .st-greenline{background:#cdeed9;color:#2f9d5f;}   /* status word — launching */
-  .st-bluesoft{background:#dbe6fb;color:#4a6fce;}    /* status word — scheduled */
-  .st-gray{background:#e5e2ec;color:#8f88a1;}        /* status word — TBD       */
+  /* Solid pilot-code pills — saturated fill + faint same-hue ring */
+  .st-amber{background:#fbe6ac;color:#b8892a;border-color:#f0d386;}  /* pilot code, warm  */
+  .st-green{background:#c5edd3;color:#2f9d5f;border-color:#98dcb0;}  /* pilot code, ready */
+  .st-purple{background:#ddd3fa;color:#7b52d6;border-color:#c4b4f2;} /* pilot code        */
+  .st-blue{background:#cfe0fb;color:#3f6fd0;border-color:#a9c6f5;}   /* pilot code        */
+  .st-red{background:#fbcccc;color:#d94a4a;border-color:#f3a8a8;}    /* pilot code, risk  */
+
+  /* Status-word pills — pale fill + clear colored outline */
+  .st-amberline{background:#fdf6e2;color:#c1912b;border-color:#ecc766;} /* pending   */
+  .st-greenline{background:#e3f5ea;color:#3a9d63;border-color:#90d3a9;} /* launching */
+  .st-bluesoft{background:#e4edfc;color:#4a6fce;border-color:#aac3f2;}  /* scheduled */
+  .st-gray{background:#eeecf2;color:#8b8499;border-color:#cec8d7;}      /* TBD       */
 
   /* footer dots */
   .footer{
