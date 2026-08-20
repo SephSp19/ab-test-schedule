@@ -7,6 +7,8 @@ and section dividers with colored left bars.
 
 ![style: AI Beauty Chat](https://img.shields.io/badge/style-AI%20Beauty%20Chat-b39ddb)
 
+![A/B Test Schedule preview](assets/preview.png)
+
 ## What it does
 
 Give it schedule data — a list, table, spreadsheet, screenshot, or set of Jira
